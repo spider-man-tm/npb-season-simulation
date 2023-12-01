@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  npb-simulation:
+    build: .
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+      - ./logs:/app/logs
