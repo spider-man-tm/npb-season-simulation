@@ -3,18 +3,46 @@
 
 ## Usage
 
-- Docker
+- Dockerの場合
 
 ```shell
 make docker-run
 ```
 
-- Local
+- Localの場合
 
 ```shell
 make poetry-install   # 初回のみ
 make local-run
 ```
+
+- 一度だけシミュレーションする場合
+
+```python
+league = 'pacific'
+seed = 1
+
+# スケジュールの作成
+game = Game(df, league=league, seed=seed)
+game.set_schedule()
+
+# 対戦成績の実績集計
+runs = Runs(df, league=league, seed=seed)
+runs.agg_stats()
+
+# シミュレーション
+home_team_runs, away_team_runs = simulation(game, runs, seed)
+
+df_schedule = game.schedule.copy()
+df_schedule['home_team_runs'] = home_team_runs
+df_schedule['away_team_runs'] = away_team_runs
+
+df_schedule.head(18)
+```
+
+<img src="result-1simulation.png" height="380">
+
+<br />
 
 ## コメント
 
@@ -42,6 +70,8 @@ AチームのB投手 vs CチームのD投手のように先発投手がそれぞ
 ### Simulation
 
 シミュレーション自体は、先ほどまでクラスを使ってあとは淡々とやるだけです。2年前と違ってnumbaを使っています。そのおかげでだいぶ高速化できました。
+
+<br />
 
 ## 結果
 
