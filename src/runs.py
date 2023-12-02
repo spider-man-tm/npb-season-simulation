@@ -1,7 +1,6 @@
 class Runs:
-    def __init__(self, df, league: str, seed: int = 0):
+    def __init__(self, df, league: str):
         self.df = df
-        self.seed = seed
 
         if league == 'central':
             self.teams = ['tigers', 'carp', 'dena',

@@ -27,7 +27,7 @@ game = Game(df, league=league, seed=seed)
 game.set_schedule()
 
 # 対戦成績の実績集計
-runs = Runs(df, league=league, seed=seed)
+runs = Runs(df, league=league)
 runs.agg_stats()
 
 # シミュレーション

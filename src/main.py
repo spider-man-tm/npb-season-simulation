@@ -12,26 +12,6 @@ from src.plot import plot_ranking
 from src.utils import make_logger
 
 
-def do_1simulation(league: Literal['central', 'pacific'], df: pd.DataFrame, seed: int) -> pd.DataFrame:
-    """1回のシミュレーションを実行する"""
-    # スケジュールの作成
-    game = Game(df, league=league, seed=seed)
-    game.set_schedule()
-
-    # 対戦成績の実績集計
-    runs = Runs(df, league=league, seed=seed)
-    runs.agg_stats()
-
-    # シミュレーション
-    home_team_runs, away_team_runs = simulation(game, runs, seed)
-
-    df_schedule = game.schedule.copy()
-    df_schedule['home_team_runs'] = home_team_runs
-    df_schedule['away_team_runs'] = away_team_runs
-
-    return df_schedule
-
-
 def main(
     league: Literal['central', 'pacific'], year: int, n_simulation: int = 10000, logger=logging.Logger
 ) -> None:
@@ -72,6 +52,10 @@ def main(
             'fighters': [10, 8, 0],  # win、loss、draw
         }
 
+    # 対戦成績の実績集計
+    runs = Runs(df, league=league)
+    runs.agg_stats()
+
     # シミュレーション開始
     rankings = []
     for seed in range(n_simulation):
@@ -79,7 +63,16 @@ def main(
         if seed % 1000 == 0:
             logger.debug(f'simulation: {seed} / {n_simulation} start...')
 
-        df_result = do_1simulation(league, df, seed)
+        # スケジュールの作成
+        game = Game(df, league=league, seed=seed)
+        game.set_schedule()
+
+        # シミュレーション
+        home_team_runs, away_team_runs = simulation(game, runs, seed)
+
+        df_result = game.schedule.copy()
+        df_result['home_team_runs'] = home_team_runs
+        df_result['away_team_runs'] = away_team_runs
 
         # シミュレーション結果からランキングを算出
         ranking = agg_ranking(df_result, inter_games)
